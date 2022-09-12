@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/model/book.ts",
+  "repository": "git@github.com:kirolos222/STORE-FRONT-BACKEND.git"
   "scripts": {
     "start": "nodemon src/index.ts",
     "prettier": "prettier --config .prettierrc.json  src/**/*.ts  --write",
