@@ -1,16 +1,16 @@
 {
     "dev": {
       "driver": "pg",
-      "user": "postgres",
-      "password": "KERO",
-      "host": "127.0.0.1",
-      "database": "postgres"
+      "user": {"ENV":"users"},
+      "password": {"ENV":"passwords"},
+      "host": {"ENV":"hosts"},
+      "database":{"ENV":"db"} 
     },
     "test": {
       "driver": "pg",
-      "user": "postgres",
-      "password": "KERO",
-      "host": "127.0.0.1",
-      "database": "postgres_test"
+      "user": {"ENV":"users"},
+      "password": {"ENV":"passwords"},
+      "host": {"ENV":"hosts"},
+      "database":{"ENV":"dbtest"} 
     }
   }

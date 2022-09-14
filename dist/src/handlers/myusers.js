@@ -8,12 +8,24 @@ const user_1 = require("../model/user");
 const verify_1 = __importDefault(require("../middleware/verify"));
 const store = new user_1.Usernn();
 const index = async (_req, res) => {
-    const weapen = await store.index();
-    res.json(weapen);
+    try {
+        const weapen = await store.index();
+        return res.status(200).json(weapen);
+    }
+    catch (err) {
+        res.status(400);
+        res.json(`products cannot be creted because ${err}`);
+    }
 };
 const show = async (_req, res) => {
-    const weapen = await store.show(_req.params.id);
-    res.json(weapen);
+    try {
+        const weapen = await store.show(_req.params.id);
+        return res.status(200).json(weapen);
+    }
+    catch (err) {
+        res.status(400);
+        res.json(`products cannot be creted because ${err}`);
+    }
 };
 const create = async (req, res) => {
     const user = {
@@ -44,7 +56,7 @@ const authenticate = async (req, res) => {
     try {
         const u = await store.authenticate(user.username, user.password);
         const token = jsonwebtoken_1.default.sign({ user: u }, process.env.TOKEN_SECRET);
-        res.json(token);
+        res.status(200).json(token);
     }
     catch (error) {
         res.status(401);
@@ -83,8 +95,15 @@ const update = async (req, res) => {
     }
 };
 const destroy = async (req, res) => {
-    const weapen = await store.delete(req.params.id);
-    res.json(weapen);
+    jsonwebtoken_1.default.verify(req.body.token, process.env.TOKEN_SECRET);
+    try {
+        const weapen = await store.delete(req.params.id);
+        return res.status(200).json(weapen);
+    }
+    catch (err) {
+        res.status(400);
+        res.json(`products cannot be creted because ${err}`);
+    }
 };
 const mount = (app) => {
     app.get('/users', verify_1.default, index);

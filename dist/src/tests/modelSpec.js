@@ -1,11 +1,18 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const orders_1 = require("../model/orders");
 const products_1 = require("../model/products");
 const user_1 = require("../model/user");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const index_1 = __importDefault(require("../index"));
+const supertest_1 = __importDefault(require("supertest"));
 const store = new orders_1.OrderStore();
 const store2 = new products_1.ProductsStore();
 const store3 = new user_1.Usernn();
+let token = '';
 describe('products Model', () => {
     it('should have an index method', () => {
         expect(store2.index).toBeDefined();
@@ -74,6 +81,7 @@ describe('user Model', () => {
             firstname: 'kerolos',
             lastname: 'hanna'
         });
+        token = jsonwebtoken_1.default.sign({ result }, process.env.TOKEN_SECRET);
         expect(result.id).toEqual(1);
         expect(result.username).toEqual('kero');
         expect(result.password).not.toEqual('hello');
@@ -98,7 +106,7 @@ describe('user Model', () => {
     });
     // it('delete method should remove theuser', async () => {
     //   await store3.delete('1')
-    //   const result = await store3.index()
+    //   const result = await stor0e3.index()
     //   expect(result).toEqual([])
     // })
 });
@@ -156,6 +164,83 @@ describe('order Model without delete', () => {
     //   const result = await store.index()
     //   expect(result).toEqual([])
     // })
+});
+describe('Test endpoint responses', () => {
+    it('gets the api endpoint ', (done) => {
+        void (0, supertest_1.default)(index_1.default).get('/').expect(200, done);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/products').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/products/1').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).post('/products').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).delete('/products/1').expect(200);
+    });
+    it('gets the api endpoint', async () => {
+        const res = await (0, supertest_1.default)(index_1.default).get('/products/1').set('Authorization', 'Bearer ' + token);
+        expect(res.status).toBe(200);
+        expect(res.body.id).toEqual(1);
+        expect(res.body.name).toBe('kero');
+        expect(res.body.price).toBe(300);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).delete('/products/2').expect(400);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/orders').expect(200);
+    });
+    it('gets the api endpoint', async () => {
+        const res = await (0, supertest_1.default)(index_1.default).get('/orders/1').set('Authorization', 'Bearer ' + token);
+        console.log(res);
+        expect(res.status).toBe(200);
+        expect(res.body.id).toEqual(1);
+        expect(res.body.status).toBe('open');
+        expect(res.body.user_id).toBe('1');
+        expect(res.body.products_id).toBe('1');
+        expect(res.body.quantity).toBe(30);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/orders/1').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).post('/orders').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).delete('/orders/1').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).delete('/orders/2').expect(400);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/users').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/users/1').expect(200);
+    });
+    it('gets the api endpoint', async () => {
+        const res = await (0, supertest_1.default)(index_1.default).get('/users/1').set('Authorization', 'Bearer ' + token);
+        // console.log(res)
+        expect(res.status).toBe(200);
+        expect(res.body.id).toEqual(1);
+        expect(res.body.firstname).toBe('kerolos');
+        expect(res.body.password).not.toBe('hello');
+        expect(res.body.lastname).toBe('hanna');
+        expect(res.body.username).toBe('kero');
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).get('/users/2').expect(400);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).post('/users').expect(200);
+    });
+    it('gets the api endpoint', () => {
+        void (0, supertest_1.default)(index_1.default).delete('/users/1').expect(200);
+    });
 });
 describe('delete', () => {
     it('should delete orders', async () => {

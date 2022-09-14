@@ -38,7 +38,7 @@ class ProductsStore {
             const result = (await conn.query(sql, [
                 b.id,
                 b.name,
-                b.price,
+                b.price
             ]));
             const products = result.rows[0];
             conn.release();

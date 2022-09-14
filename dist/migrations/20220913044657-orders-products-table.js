@@ -16,7 +16,7 @@ exports.setup = function (options, seedLink) {
     Promise = options.Promise;
 };
 exports.up = function (db) {
-    var filePath = path.join(__dirname, 'sqls', '20220909180624-mythical-worlds-table-up.sql');
+    var filePath = path.join(__dirname, 'sqls', '20220913044657-orders-products-table-up.sql');
     return new Promise(function (resolve, reject) {
         fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
             if (err)
@@ -30,7 +30,7 @@ exports.up = function (db) {
     });
 };
 exports.down = function (db) {
-    var filePath = path.join(__dirname, 'sqls', '20220909180624-mythical-worlds-table-down.sql');
+    var filePath = path.join(__dirname, 'sqls', '20220913044657-orders-products-table-down.sql');
     return new Promise(function (resolve, reject) {
         fs.readFile(filePath, { encoding: 'utf-8' }, function (err, data) {
             if (err)

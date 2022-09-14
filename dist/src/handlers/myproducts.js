@@ -7,23 +7,34 @@ const products_1 = require("../model/products");
 const verify_1 = __importDefault(require("../middleware/verify"));
 const store = new products_1.ProductsStore();
 const index = async (_req, res) => {
-    const weapen = await store.index();
-    res.json(weapen);
+    try {
+        const weapen = await store.index();
+        return res.status(200).json(weapen);
+    }
+    catch (err) {
+        res.status(400);
+        res.json(`products cannot be creted because ${err}`);
+    }
 };
 const show = async (_req, res) => {
-    const weapen = await store.show(_req.params.id);
-    res.json(weapen);
+    try {
+        const weapen = await store.show(_req.params.id);
+        return res.status(200).json(weapen);
+    }
+    catch (err) {
+        res.status(400);
+        res.json(`products cannot be creted because ${err}`);
+    }
 };
 const create = async (req, res) => {
     const productstore = {
         id: req.body.id,
         name: req.body.name,
-        price: req.body.price,
+        price: req.body.price
     };
-    // jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
     try {
         const weapen = await store.create(productstore);
-        res.json(weapen);
+        res.status(200).json(weapen);
     }
     catch (err) {
         res.status(400);
@@ -31,8 +42,14 @@ const create = async (req, res) => {
     }
 };
 const delet = async (req, res) => {
-    const weapen = await store.delete(req.params.id);
-    res.json(weapen);
+    try {
+        const weapen = await store.delete(req.params.id);
+        return res.status(200).json(weapen);
+    }
+    catch (err) {
+        res.status(400);
+        res.json(`products cannot be creted because ${err}`);
+    }
 };
 const myproduct = (app) => {
     app.get('/products', verify_1.default, index);

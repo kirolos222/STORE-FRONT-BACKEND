@@ -1,26 +1,27 @@
-import { title } from 'process';
-import client from '../database';
-import { PoolClient, QueryResult } from 'pg';
+import { title } from 'process'
+import client from '../database'
+import { PoolClient, QueryResult } from 'pg'
 export interface products {
-  id: number;
-  name: string;
-  price: number;
+  [x: string]: any
+  id: number
+  name: string
+  price: number
 }
 
 export class ProductsStore {
-  async index(): Promise<products[]> {
+  async index (): Promise<products[]> {
     try {
-      const conn = (await client.connect()) as unknown as PoolClient;
-      const sql = 'SELECT * FROM products' as unknown as string;
-      const result = (await conn.query(sql)) as unknown as QueryResult;
-      void conn.release();
-      return result.rows;
+      const conn = (await client.connect()) as unknown as PoolClient
+      const sql = 'SELECT * FROM products' as unknown as string
+      const result = (await conn.query(sql)) as unknown as QueryResult
+      void conn.release()
+      return result.rows
     } catch (err) {
-      throw new Error(`Could not get products. Error: ${err}`);
+      throw new Error(`Could not get products. Error: ${err}`)
     }
   }
 
-  async show(id: string): Promise<products> {
+  async show (id: string): Promise<products> {
     try {
       const conn = (await client.connect()) as unknown as PoolClient
       const sql = 'SELECT * FROM products WHERE id=($1)' as unknown as string
@@ -34,36 +35,36 @@ export class ProductsStore {
     }
   }
 
-  async create(b: products): Promise<products> {
+  async create (b: products): Promise<products> {
     try {
       const sql =
-        'INSERT INTO products (id, name, price) VALUES($1, $2, $3) RETURNING *' as unknown as string;
-      const conn = (await client.connect()) as unknown as PoolClient;
+        'INSERT INTO products (id, name, price) VALUES($1, $2, $3) RETURNING *' as unknown as string
+      const conn = (await client.connect()) as unknown as PoolClient
       const result = (await conn.query(sql, [
         b.id,
         b.name,
-        b.price,
-      ])) as unknown as QueryResult;
-      const products = result.rows[0];
-      conn.release();
-      return products;
+        b.price
+      ])) as unknown as QueryResult
+      const products = result.rows[0]
+      conn.release()
+      return products
     } catch (err) {
-      throw new Error(`Could not add new products ${title}. Error: ${err}`);
+      throw new Error(`Could not add new products ${title}. Error: ${err}`)
     }
   }
 
-  async delete(id: string): Promise<products> {
+  async delete (id: string): Promise<products> {
     try {
-      const sql = 'DELETE FROM products WHERE id=($1)' as unknown as string;
-      const conn = (await client.connect()) as unknown as PoolClient;
-      const result = (await conn.query(sql, [id])) as unknown as QueryResult;
-      const products = result.rows[0];
+      const sql = 'DELETE FROM products WHERE id=($1)' as unknown as string
+      const conn = (await client.connect()) as unknown as PoolClient
+      const result = (await conn.query(sql, [id])) as unknown as QueryResult
+      const products = result.rows[0]
 
-      void conn.release();
+      void conn.release()
 
-      return products;
+      return products
     } catch (err) {
-      throw new Error(`Could not delete products ${id}. Error: ${err}`);
+      throw new Error(`Could not delete products ${id}. Error: ${err}`)
     }
   }
 }

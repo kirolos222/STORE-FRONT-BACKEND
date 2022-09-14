@@ -3,14 +3,24 @@ import express, { Request, Response } from 'express'
 import { User, Usernn } from '../model/user'
 import verifyAuthToken from '../middleware/verify'
 const store = new Usernn()
-const index = async (_req: Request, res: Response): Promise<void> => {
-  const weapen = await store.index()
-  res.json(weapen)
+const index = async (_req: Request, res: Response): Promise<User[] | undefined> => {
+  try {
+    const weapen = await store.index() as unknown as User[]
+    return res.status(200).json(weapen) as unknown as User[]
+  } catch (err) {
+    res.status(400)
+    res.json(`products cannot be creted because ${err}`)
+  }
 }
 
-const show = async (_req: Request, res: Response): Promise<void> => {
-  const weapen = await store.show(_req.params.id)
-  res.json(weapen)
+const show = async (_req: Request, res: Response): Promise<User | undefined> => {
+  try {
+    const weapen = await store.show(_req.params.id)
+    return res.status(200).json(weapen) as unknown as User
+  } catch (err) {
+    res.status(400)
+    res.json(`products cannot be creted because ${err}`)
+  }
 }
 const create = async (req: Request, res: Response): Promise<void> => {
   const user: User = {
@@ -46,7 +56,7 @@ const authenticate = async (req: Request, res: Response): Promise<void> => {
       { user: u },
       process.env.TOKEN_SECRET as unknown as string
     )
-    res.json(token)
+    res.status(200).json(token)
   } catch (error) {
     res.status(401)
     res.json(error)
@@ -85,9 +95,15 @@ const update = async (req: Request, res: Response): Promise<void> => {
     res.json(err)
   }
 }
-const destroy = async (req: Request, res: Response): Promise<void> => {
-  const weapen = await store.delete(req.params.id)
-  res.json(weapen)
+const destroy = async (req: Request, res: Response): Promise<User | undefined> => {
+  jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
+  try {
+    const weapen = await store.delete(req.params.id)
+    return res.status(200).json(weapen) as unknown as User
+  } catch (err) {
+    res.status(400)
+    res.json(`products cannot be creted because ${err}`)
+  }
 }
 const mount = (app: express.Application): void => {
   app.get('/users', verifyAuthToken, index)

@@ -13,7 +13,7 @@ const app = (0, express_1.default)();
 const adress = '0.0.0.0:5000';
 const cor = {
     origin: 'https://stackoverflow.com/questions/62870228/typeerror-the-first-argument-must-be-one-of-type-string-buffer-arraybuffer-a',
-    optionsSuccessStatus: 200,
+    optionsSuccessStatus: 200
 };
 app.use((0, cors_1.default)(cor));
 app.use(body_parser_1.default.json());
@@ -26,3 +26,4 @@ app.get('/', function (req, res) {
 app.listen(5000, function () {
     console.log(`statring on port ${adress}`);
 });
+exports.default = app;
