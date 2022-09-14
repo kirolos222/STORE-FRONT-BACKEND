@@ -30,6 +30,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     name: req.body.name,
     price: req.body.price
   }
+  jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.create(productstore)
     res.status(200).json(weapen)
@@ -48,7 +49,7 @@ const delet = async (req: Request, res: Response): Promise<products | undefined>
   }
 }
 const myproduct = (app: express.Application): void => {
-  app.get('/products', verifyAuthToken, index)
+  app.get('/products', index)
   app.get('/products/:id', show)
   app.post('/products', verifyAuthToken, create)
   app.delete('/products/:id', delet)

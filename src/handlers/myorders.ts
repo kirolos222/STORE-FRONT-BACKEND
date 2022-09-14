@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import verifyAuthToken from '../middleware/verify'
 const store = new OrderStore()
 const index = async (_req: Request, res: Response): Promise<orders[] | undefined> => {
-  
+  jwt.verify(_req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.index() as unknown as orders[]
     return res.status(200).json(weapen) as unknown as orders[]
@@ -15,7 +15,7 @@ const index = async (_req: Request, res: Response): Promise<orders[] | undefined
 }
 
 const showcurrent = async (req: Request, res: Response): Promise<orders | undefined> => {
-  // jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
+  jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.showcurrent(req.params.id)
     return res.status(200).json(weapen) as unknown as orders
@@ -33,6 +33,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
     products_id: req.body.products_id,
     quantity: req.body.quantity
   }
+  jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.create(OrderStore)
     res.status(200).json(weapen)
@@ -41,6 +42,7 @@ const create = async (req: Request, res: Response): Promise<void> => {
   }
 }
 const delet = async (req: Request, res: Response): Promise<void> => {
+  jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
   const weapen = await store.delete(req.params.id)
   res.json(weapen)
 }

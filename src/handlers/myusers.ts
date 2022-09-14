@@ -4,6 +4,7 @@ import { User, Usernn } from '../model/user'
 import verifyAuthToken from '../middleware/verify'
 const store = new Usernn()
 const index = async (_req: Request, res: Response): Promise<User[] | undefined> => {
+  jwt.verify(_req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.index() as unknown as User[]
     return res.status(200).json(weapen) as unknown as User[]
@@ -14,6 +15,7 @@ const index = async (_req: Request, res: Response): Promise<User[] | undefined> 
 }
 
 const show = async (_req: Request, res: Response): Promise<User | undefined> => {
+  jwt.verify(_req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.show(_req.params.id)
     return res.status(200).json(weapen) as unknown as User
