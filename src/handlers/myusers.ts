@@ -22,7 +22,7 @@ const show = async (_req: Request, res: Response): Promise<User | undefined> => 
     res.json(`products cannot be creted because ${err}`)
   }
 }
-const create = async (req: Request, res: Response): Promise<void> => {
+const create = async (req: Request, res: Response): Promise<string | undefined> => {
   const user: User = {
     id: req.body.id,
     password: req.body.password,
@@ -36,7 +36,8 @@ const create = async (req: Request, res: Response): Promise<void> => {
       { user: newUser },
       process.env.TOKEN_SECRET as unknown as string
     )
-    res.status(200).json(token)
+    res.status(200).json(newUser)
+    return token
   } catch (err) {
     res.status(400)
     res.json(`the user cannot be creted because ${err}`)
@@ -96,7 +97,6 @@ const update = async (req: Request, res: Response): Promise<void> => {
   }
 }
 const destroy = async (req: Request, res: Response): Promise<User | undefined> => {
-  jwt.verify(req.body.token, process.env.TOKEN_SECRET as unknown as string)
   try {
     const weapen = await store.delete(req.params.id)
     return res.status(200).json(weapen) as unknown as User

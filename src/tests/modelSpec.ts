@@ -173,7 +173,7 @@ describe('order Model without delete', () => {
     }])
   })
 
-  it('show method should return the correct order', async () => {
+  it('show method should return the correct order by user_id', async () => {
     const result = await store.showcurrent('1')
     expect(result).toEqual({
       id: 1,
@@ -183,35 +183,99 @@ describe('order Model without delete', () => {
       quantity: 30
     })
   })
-  // it('delete method should remove the order', async () => {
-  //   await store.delete('1')
-  //   const result = await store.index()
-
-  //   expect(result).toEqual([])
-  // })
 })
 describe('Test endpoint responses', (): void => {
   it('gets the api endpoint ', (done): void => {
     void supertest(app).get('/').expect(200, done)
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/products').expect(200)
+  it('gets the api endpoint create orders', async (): Promise<void> => {
+    const hg = {
+      id: 2,
+      status: 'open',
+      user_id: '1',
+      products_id: '1',
+      quantity: 30
+    }
+    const res = await supertest(app).post('/orders').send(hg).set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({
+      id: 2,
+      status: 'open',
+      user_id: '1',
+      products_id: '1',
+      quantity: 30
+    })
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/products/1').expect(200)
+  it('gets the api endpoint show all orders', async (): Promise<void> => {
+    const res = await supertest(app).get('/orders').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual([{
+      id: 1,
+      status: 'open',
+      user_id: '1',
+      products_id: '1',
+      quantity: 30
+    }, {
+      id: 2,
+      status: 'open',
+      user_id: '1',
+      products_id: '1',
+      quantity: 30
+    }])
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).post('/products').expect(200)
+  it('gets the api endpoint delete orders', async (): Promise<void> => {
+    const res = await supertest(app).delete('/orders/2').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual('')
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).delete('/products/1').expect(200)
+  it('gets the api endpoint show a select orders by user_id', async (): Promise<void> => {
+    const res = await supertest(app).get('/orders/1').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({
+      id: 1,
+      status: 'open',
+      user_id: '1',
+      products_id: '1',
+      quantity: 30
+    })
   }
   )
-  it('gets the api endpoint', async (): Promise<void> => {
+  it('gets the api endpoint delete orders', (): void => {
+    void supertest(app).delete('/orders/2').expect(400)
+  }
+  )
+  it('gets the api endpoint create products', async (): Promise<void> => {
+    const hg = {
+      id: 2,
+      name: 'kero',
+      price: 300
+    }
+    const res = await supertest(app).post('/products').send(hg).set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual({ id: 2, name: 'kero', price: 300 })
+  }
+  )
+  it('gets the api endpoint show all products', async (): Promise<void> => {
+    const res = await supertest(app).get('/products').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual([{ id: 1, name: 'kero', price: 300 }, {
+      id: 2,
+      name: 'kero',
+      price: 300
+    }])
+  }
+  )
+  it('gets the api endpoint delete products', async (): Promise<void> => {
+    const res = await supertest(app).delete('/products/2').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual('')
+  }
+  )
+  it('gets the api endpoint show a select products', async (): Promise<void> => {
     const res = await supertest(app).get('/products/1').set('Authorization', 'Bearer ' + token)
     expect(res.status).toBe(200)
     expect(res.body.id).toEqual(1 as unknown as number)
@@ -219,69 +283,59 @@ describe('Test endpoint responses', (): void => {
     expect(res.body.price).toBe(300)
   }
   )
-  it('gets the api endpoint', (): void => {
+  it('gets the api endpoint delete products', (): void => {
     void supertest(app).delete('/products/2').expect(400)
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/orders').expect(200)
-  }
-  )
-  it('gets the api endpoint', async (): Promise<void> => {
-    const res = await supertest(app).get('/orders/1').set('Authorization', 'Bearer ' + token)
+  it('gets the api endpoint create users', async (): Promise<void> => {
+    const hg = {
+      id: 2,
+      username: 'kero',
+      password: 'hello',
+      firstname: 'kerolos',
+      lastname: 'hanna'
+    }
+    const res = await supertest(app).post('/users').send(hg).set('Authorization', 'Bearer ' + token)
     expect(res.status).toBe(200)
-    expect(res.body.id).toEqual(1 as unknown as number)
-    expect(res.body.status).toBe('open')
-    expect(res.body.user_id).toBe('1')
-    expect(res.body.products_id).toBe('1')
-    expect(res.body.quantity).toBe(30)
-  }
-  )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/orders/1').expect(200)
-  }
-  )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).post('/orders').expect(200)
-  }
-  )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).delete('/orders/1').expect(200)
-  }
-  )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).delete('/orders/2').expect(400)
-  }
-  )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/users').expect(200)
-  }
-  )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/users/1').expect(200)
-  }
-  )
-  it('gets the api endpoint', async (): Promise<void> => {
-    const res = await supertest(app).get('/users/1').set('Authorization', 'Bearer ' + token)
-    // console.log(res)
-    expect(res.status).toBe(200)
-    expect(res.body.id).toEqual(1 as unknown as number)
-    expect(res.body.firstname).toBe('kerolos')
-    expect(res.body.password).not.toBe('hello')
-    expect(res.body.lastname).toBe('hanna')
+    expect(res.body.id).toBe(2 as unknown as number)
     expect(res.body.username).toBe('kero')
+    expect(res.body.password).not.toBe('hello')
+    expect(res.body.firstname).toBe('kerolos')
+    expect(res.body.lastname).toBe('hanna')
+  })
+  it('gets the api endpoint show all users', async (): Promise<void> => {
+    const res = await supertest(app).get('/users').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body[0].id).toBe(1 as unknown as number)
+    expect(res.body[1].id).toBe(2 as unknown as number)
+    expect(res.body[0].username).toBe('kero')
+    expect(res.body[1].username).toBe('kero')
+    expect(res.body[0].password).not.toBe('hello')
+    expect(res.body[1].password).not.toBe('hello')
+    expect(res.body[0].firstname).toBe('kerolos')
+    expect(res.body[1].firstname).toBe('kerolos')
+    expect(res.body[0].lastname).toBe('hanna')
+    expect(res.body[1].lastname).toBe('hanna')
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).get('/users/2').expect(400)
+  it('gets the api endpoint delete users', async (): Promise<void> => {
+    const res = await supertest(app).delete('/users/2').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body).toEqual('')
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).post('/users').expect(200)
+  it('gets the api endpoint show a select users', async (): Promise<void> => {
+    const res = await supertest(app).get('/users/1').set('Authorization', 'Bearer ' + token)
+    expect(res.status).toBe(200)
+    expect(res.body.id).toBe(1 as unknown as number)
+    expect(res.body.username).toBe('kero')
+    expect(res.body.password).not.toBe('hello')
+    expect(res.body.firstname).toBe('kerolos')
+    expect(res.body.lastname).toBe('hanna')
   }
   )
-  it('gets the api endpoint', (): void => {
-    void supertest(app).delete('/users/1').expect(200)
+  it('gets the api endpoint delete unknown user', (): void => {
+    void supertest(app).delete('/users/2').expect(400)
   }
   )
 })
